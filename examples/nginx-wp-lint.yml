@@ -1,0 +1,12 @@
+# The same settings in YAML (needs: pip install "nginx-wp-lint[yaml]").
+# Save as .nginx-wp-lint.yml.
+fail_on: medium
+min_severity: low
+disable:
+  - csp-missing
+severity:
+  NWL013: info
+options:
+  client_max_body_size_min: 64m
+  extra_sensitive_paths:
+    - /wp-content/uploads/exports/orders.csv

@@ -1,0 +1,33 @@
+# Example configuration. Copy it to the root of your repository (or the
+# directory you run nginx-wp-lint from) as .nginx-wp-lint.toml.
+
+# Exit with status 1 when a problem at or above this severity is found:
+# info, low, medium, high, or "never".
+fail_on = "medium"
+
+# Do not report problems below this severity.
+min_severity = "low"
+
+# Turn rules off by id or name.
+disable = [
+    "csp-missing",          # we ship CSP from the application
+    "NWL075",
+]
+
+# Files to skip (glob patterns, matched against the path and the file name).
+exclude = ["**/legacy/*.conf", "*.disabled"]
+
+# Resolve relative includes against this directory (like `nginx -p`).
+# prefix = "/etc/nginx"
+
+# Change the severity of individual rules.
+[severity]
+NWL013 = "info"                 # referrer-policy-missing
+"xmlrpc-not-blocked" = "high"
+
+# Rule options.
+[options]
+client_max_body_size_min = "64m"      # NWL022
+hsts_min_max_age = 31536000           # NWL011, seconds
+logged_in_cookie = "wordpress_logged_in"  # NWL032
+extra_sensitive_paths = ["/wp-content/uploads/exports/orders.csv"]  # NWL004

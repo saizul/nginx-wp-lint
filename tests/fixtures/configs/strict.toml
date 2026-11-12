@@ -1,0 +1,12 @@
+fail_on = "medium"
+min_severity = "low"
+disable = ["NWL014", "gzip-disabled"]
+exclude = ["**/static-*.conf"]
+
+[severity]
+NWL013 = "high"
+"client-max-body-size" = "medium"
+
+[options]
+client_max_body_size_min = "128m"
+hsts_min_max_age = 63072000

@@ -1,0 +1,34 @@
+naive-site.conf:2:1: info NWL001 server-tokens: server_tokens is not set (default: on) (not set in this file; ignore if nginx.conf sets it in the http block) [blog.example.com:80]
+    hint: Add `server_tokens off;` to the http block.
+naive-site.conf:2:1: high NWL003 dotfiles-exposed: hidden files are served: /.git/config, /.env, /.htaccess, /.user.ini, /.svn/entries (handled by location / (line 9)) [blog.example.com:80]
+    hint: Deny hidden files but keep ACME challenges working: `location ~ /\.(?!well-known/) { deny all; }`
+naive-site.conf:2:1: high NWL004 sensitive-files-exposed: these paths would be downloadable if the files exist: /wp-config.php.bak, /wp-config.php~, /wp-config.php.save, /wp-config.old, /backup.sql, /database.sql.gz and 7 more [blog.example.com:80]
+    hint: Deny them, for example: `location ~* \.(sql|sql\.gz|bak|old|orig|save|swp|zip|tar|tar\.gz|tgz|gz|wpress|log)$|~$ { deny all; }` and `location ~* ^/wp-content/(ai1wm-backups|updraft|backups-dup-lite|uploads/wc-logs)/ { deny all; }`
+naive-site.conf:2:1: low NWL005 wp-config-not-denied: /wp-config.php is passed to PHP; nothing is printed today, but a PHP-FPM outage or misconfiguration would expose the source [blog.example.com:80]
+    hint: Add `location = /wp-config.php { deny all; }` as defence in depth.
+naive-site.conf:2:1: medium NWL006 xmlrpc-not-blocked: /xmlrpc.php is executed by PHP (handled by location ~ \.php$ (line 18)) [blog.example.com:80]
+    hint: Block it: `location = /xmlrpc.php { deny all; access_log off; log_not_found off; }`. Jetpack and some apps need it: allow their addresses before `deny all`.
+naive-site.conf:2:1: high NWL007 php-in-uploads: an uploaded .php file would run: /wp-content/uploads/2026/01/shell.php is handled by location ~ \.php$ (line 18) [blog.example.com:80]
+    hint: Deny PHP in uploads with a regex location placed BEFORE the PHP location: `location ~* ^/wp-content/uploads/.*\.(php|phtml|phar)$ { deny all; }`. A prefix `location /wp-content/uploads/` does not stop the regex PHP location unless it uses `^~`.
+naive-site.conf:2:1: low NWL012 x-content-type-options-missing: X-Content-Type-Options header is not set [blog.example.com:80]
+    hint: Add `add_header X-Content-Type-Options nosniff always;`
+naive-site.conf:2:1: low NWL013 referrer-policy-missing: Referrer-Policy header is not set [blog.example.com:80]
+    hint: Add `add_header Referrer-Policy "strict-origin-when-cross-origin" always;`
+naive-site.conf:2:1: info NWL014 csp-missing: Content-Security-Policy header is not set [blog.example.com:80]
+    hint: Start with a report-only policy and tighten it: `add_header Content-Security-Policy-Report-Only "default-src 'self'; ..." always;` WordPress plugins often need inline scripts, so test before enforcing.
+naive-site.conf:2:1: low NWL016 clickjacking-protection-missing: pages can be framed by other sites (no X-Frame-Options or frame-ancestors) [blog.example.com:80]
+    hint: Add `add_header X-Frame-Options "SAMEORIGIN" always;` or `frame-ancestors 'self'` in the Content-Security-Policy.
+naive-site.conf:2:1: info NWL020 gzip-disabled: compression is not enabled (gzip defaults to off) (not set in this file; ignore if nginx.conf sets it in the http block) [blog.example.com:80]
+    hint: Add `gzip on;` with `gzip_types` (and `brotli on;` if the module is installed).
+naive-site.conf:2:1: info NWL022 client-max-body-size: client_max_body_size is not set: uploads over 1 MB fail with 413 Request Entity Too Large (not set in this file; ignore if nginx.conf sets it in the http block) [blog.example.com:80]
+    hint: Set `client_max_body_size 64m;` (match upload_max_filesize in php.ini).
+naive-site.conf:2:1: medium NWL060 wp-login-no-rate-limit: /wp-login.php is handled by location ~ \.php$ (line 18) without limit_req [blog.example.com:80]
+    hint: In the http block: `limit_req_zone $binary_remote_addr zone=wplogin:10m rate=5r/m;` and in the server: `location = /wp-login.php { limit_req zone=wplogin burst=5 nodelay; include snippets/fastcgi-php.conf; fastcgi_pass ...; }`
+naive-site.conf:7:5: medium NWL002 autoindex-on: autoindex on lists directory contents, including backups and uploads
+    hint: Remove `autoindex on;` (the default is off), or limit it to a dedicated location.
+naive-site.conf:18:5: medium NWL051 php-location-no-file-check: PHP location has no `try_files $uri =404;`: requests for scripts that do not exist reach PHP-FPM [blog.example.com:80]
+    hint: Add `try_files $uri =404;` to the PHP location (snippets/fastcgi-php.conf on Debian/Ubuntu does this), and keep `cgi.fix_pathinfo=0` in php.ini.
+naive-site.conf:18:5: medium NWL052 script-filename-missing: no SCRIPT_FILENAME fastcgi_param in scope (fastcgi_params does not set it) [blog.example.com:80]
+    hint: Use `include fastcgi.conf;` (it sets SCRIPT_FILENAME), or add `fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;` after `include fastcgi_params;`.
+
+16 problems (3 high, 5 medium, 4 low, 4 info) in 1 file

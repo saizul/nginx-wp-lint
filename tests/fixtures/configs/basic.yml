@@ -1,0 +1,8 @@
+fail_on: high
+disable:
+  - NWL016
+severity:
+  NWL012: info
+options:
+  extra_sensitive_paths:
+    - /private/export.csv

@@ -1,0 +1,5 @@
+[project]
+name = "infra"
+
+[tool.nginx-wp-lint]
+disable = ["NWL001"]

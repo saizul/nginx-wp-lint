@@ -1,0 +1,1708 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "nginx-wp-lint",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "informationUri": "https://github.com/saizul/nginx-wp-lint",
+          "rules": [
+            {
+              "id": "NWL000",
+              "name": "parse-error",
+              "shortDescription": {
+                "text": "The file could not be read or parsed"
+              },
+              "fullDescription": {
+                "text": "The file could not be read or parsed"
+              },
+              "help": {
+                "text": "Fix the syntax error; `nginx -t` shows the same problem.",
+                "markdown": "Fix the syntax error; `nginx -t` shows the same problem."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "syntax"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL001",
+              "name": "server-tokens",
+              "shortDescription": {
+                "text": "server_tokens is not off, so every response and error page shows the nginx version"
+              },
+              "fullDescription": {
+                "text": "server_tokens is not off, so every response and error page shows the nginx version"
+              },
+              "help": {
+                "text": "Add `server_tokens off;` to the http block.",
+                "markdown": "Add `server_tokens off;` to the http block."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "security",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL002",
+              "name": "autoindex-on",
+              "shortDescription": {
+                "text": "Directory listings are enabled"
+              },
+              "fullDescription": {
+                "text": "Directory listings are enabled"
+              },
+              "help": {
+                "text": "Remove `autoindex on;` (the default is off), or limit it to a dedicated location.",
+                "markdown": "Remove `autoindex on;` (the default is off), or limit it to a dedicated location."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "security",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL003",
+              "name": "dotfiles-exposed",
+              "shortDescription": {
+                "text": "Hidden files such as .git/, .env and .htaccess can be downloaded"
+              },
+              "fullDescription": {
+                "text": "Hidden files such as .git/, .env and .htaccess can be downloaded"
+              },
+              "help": {
+                "text": "Deny hidden files but keep ACME challenges working: `location ~ /\\.(?!well-known/) { deny all; }`",
+                "markdown": "Deny hidden files but keep ACME challenges working: `location ~ /\\.(?!well-known/) { deny all; }`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "security",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL004",
+              "name": "sensitive-files-exposed",
+              "shortDescription": {
+                "text": "Backups, database dumps, wp-config.php copies and log files are served if they exist"
+              },
+              "fullDescription": {
+                "text": "Backups, database dumps, wp-config.php copies and log files are served if they exist"
+              },
+              "help": {
+                "text": "Deny them, for example: `location ~* \\.(sql|sql\\.gz|bak|old|orig|save|swp|zip|tar|tar\\.gz|tgz|gz|wpress|log)$|~$ { deny all; }` and `location ~* ^/wp-content/(ai1wm-backups|updraft|backups-dup-lite|uploads/wc-logs)/ { deny all; }`",
+                "markdown": "Deny them, for example: `location ~* \\.(sql|sql\\.gz|bak|old|orig|save|swp|zip|tar|tar\\.gz|tgz|gz|wpress|log)$|~$ { deny all; }` and `location ~* ^/wp-content/(ai1wm-backups|updraft|backups-dup-lite|uploads/wc-logs)/ { deny all; }`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "security",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL005",
+              "name": "wp-config-not-denied",
+              "shortDescription": {
+                "text": "Requests for wp-config.php reach PHP"
+              },
+              "fullDescription": {
+                "text": "Requests for wp-config.php reach PHP"
+              },
+              "help": {
+                "text": "Add `location = /wp-config.php { deny all; }` as defence in depth.",
+                "markdown": "Add `location = /wp-config.php { deny all; }` as defence in depth."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "security",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL006",
+              "name": "xmlrpc-not-blocked",
+              "shortDescription": {
+                "text": "xmlrpc.php is reachable (brute force amplification and pingback abuse)"
+              },
+              "fullDescription": {
+                "text": "xmlrpc.php is reachable (brute force amplification and pingback abuse)"
+              },
+              "help": {
+                "text": "Block it: `location = /xmlrpc.php { deny all; access_log off; log_not_found off; }`. Jetpack and some apps need it: allow their addresses before `deny all`.",
+                "markdown": "Block it: `location = /xmlrpc.php { deny all; access_log off; log_not_found off; }`. Jetpack and some apps need it: allow their addresses before `deny all`."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL007",
+              "name": "php-in-uploads",
+              "shortDescription": {
+                "text": "PHP files inside wp-content/uploads are executed"
+              },
+              "fullDescription": {
+                "text": "PHP files inside wp-content/uploads are executed"
+              },
+              "help": {
+                "text": "Deny PHP in uploads with a regex location placed BEFORE the PHP location: `location ~* ^/wp-content/uploads/.*\\.(php|phtml|phar)$ { deny all; }`. A prefix `location /wp-content/uploads/` does not stop the regex PHP location unless it uses `^~`.",
+                "markdown": "Deny PHP in uploads with a regex location placed BEFORE the PHP location: `location ~* ^/wp-content/uploads/.*\\.(php|phtml|phar)$ { deny all; }`. A prefix `location /wp-content/uploads/` does not stop the regex PHP location unless it uses `^~`."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL008",
+              "name": "php-source-disclosure",
+              "shortDescription": {
+                "text": "PHP files are served as plain text instead of being executed"
+              },
+              "fullDescription": {
+                "text": "PHP files are served as plain text instead of being executed"
+              },
+              "help": {
+                "text": "Add a PHP location, for example `location ~ \\.php$ { include snippets/fastcgi-php.conf; fastcgi_pass unix:/run/php/php-fpm.sock; }`.",
+                "markdown": "Add a PHP location, for example `location ~ \\.php$ { include snippets/fastcgi-php.conf; fastcgi_pass unix:/run/php/php-fpm.sock; }`."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL009",
+              "name": "acme-challenge-blocked",
+              "shortDescription": {
+                "text": "A dotfile rule also blocks /.well-known/acme-challenge/ (certificate renewal)"
+              },
+              "fullDescription": {
+                "text": "A dotfile rule also blocks /.well-known/acme-challenge/ (certificate renewal)"
+              },
+              "help": {
+                "text": "Exclude .well-known from the dotfile rule: `location ~ /\\.(?!well-known/) { deny all; }`",
+                "markdown": "Exclude .well-known from the dotfile rule: `location ~ /\\.(?!well-known/) { deny all; }`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "security",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL010",
+              "name": "hsts-missing",
+              "shortDescription": {
+                "text": "HTTPS server without Strict-Transport-Security"
+              },
+              "fullDescription": {
+                "text": "HTTPS server without Strict-Transport-Security"
+              },
+              "help": {
+                "text": "Add `add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains\" always;` once HTTPS works for every subdomain.",
+                "markdown": "Add `add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains\" always;` once HTTPS works for every subdomain."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "headers",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL011",
+              "name": "hsts-weak",
+              "shortDescription": {
+                "text": "Strict-Transport-Security max-age is shorter than recommended"
+              },
+              "fullDescription": {
+                "text": "Strict-Transport-Security max-age is shorter than recommended"
+              },
+              "help": {
+                "text": "Use a max-age of at least 15552000 (180 days); 31536000 (one year) is common.",
+                "markdown": "Use a max-age of at least 15552000 (180 days); 31536000 (one year) is common."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "headers",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL012",
+              "name": "x-content-type-options-missing",
+              "shortDescription": {
+                "text": "X-Content-Type-Options: nosniff is not set"
+              },
+              "fullDescription": {
+                "text": "X-Content-Type-Options: nosniff is not set"
+              },
+              "help": {
+                "text": "Add `add_header X-Content-Type-Options nosniff always;`",
+                "markdown": "Add `add_header X-Content-Type-Options nosniff always;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "headers",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL013",
+              "name": "referrer-policy-missing",
+              "shortDescription": {
+                "text": "Referrer-Policy is not set"
+              },
+              "fullDescription": {
+                "text": "Referrer-Policy is not set"
+              },
+              "help": {
+                "text": "Add `add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;`",
+                "markdown": "Add `add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "headers",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL014",
+              "name": "csp-missing",
+              "shortDescription": {
+                "text": "No Content-Security-Policy (or Report-Only) header"
+              },
+              "fullDescription": {
+                "text": "No Content-Security-Policy (or Report-Only) header"
+              },
+              "help": {
+                "text": "Start with a report-only policy and tighten it: `add_header Content-Security-Policy-Report-Only \"default-src 'self'; ...\" always;` WordPress plugins often need inline scripts, so test before enforcing.",
+                "markdown": "Start with a report-only policy and tighten it: `add_header Content-Security-Policy-Report-Only \"default-src 'self'; ...\" always;` WordPress plugins often need inline scripts, so test before enforcing."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "headers",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "1.0"
+              }
+            },
+            {
+              "id": "NWL015",
+              "name": "add-header-inheritance",
+              "shortDescription": {
+                "text": "A location with its own add_header loses the security headers set at the server or http level"
+              },
+              "fullDescription": {
+                "text": "A location with its own add_header loses the security headers set at the server or http level"
+              },
+              "help": {
+                "text": "Repeat the security headers in this location (an include file helps), use `add_header_inherit merge;` on nginx 1.29.3+, or move the extra header elsewhere.",
+                "markdown": "Repeat the security headers in this location (an include file helps), use `add_header_inherit merge;` on nginx 1.29.3+, or move the extra header elsewhere."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "headers",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL016",
+              "name": "clickjacking-protection-missing",
+              "shortDescription": {
+                "text": "Neither X-Frame-Options nor a CSP frame-ancestors directive is set"
+              },
+              "fullDescription": {
+                "text": "Neither X-Frame-Options nor a CSP frame-ancestors directive is set"
+              },
+              "help": {
+                "text": "Add `add_header X-Frame-Options \"SAMEORIGIN\" always;` or `frame-ancestors 'self'` in the Content-Security-Policy.",
+                "markdown": "Add `add_header X-Frame-Options \"SAMEORIGIN\" always;` or `frame-ancestors 'self'` in the Content-Security-Policy."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "headers",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL017",
+              "name": "header-without-always",
+              "shortDescription": {
+                "text": "Security headers without `always` are missing from error responses"
+              },
+              "fullDescription": {
+                "text": "Security headers without `always` are missing from error responses"
+              },
+              "help": {
+                "text": "Append `always` to security add_header directives.",
+                "markdown": "Append `always` to security add_header directives."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "headers",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "1.0"
+              }
+            },
+            {
+              "id": "NWL020",
+              "name": "gzip-disabled",
+              "shortDescription": {
+                "text": "Neither gzip nor brotli compression is enabled"
+              },
+              "fullDescription": {
+                "text": "Neither gzip nor brotli compression is enabled"
+              },
+              "help": {
+                "text": "Add `gzip on;` with `gzip_types` (and `brotli on;` if the module is installed).",
+                "markdown": "Add `gzip on;` with `gzip_types` (and `brotli on;` if the module is installed)."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "performance"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL021",
+              "name": "gzip-types-default",
+              "shortDescription": {
+                "text": "gzip is on but gzip_types is not set, so only text/html is compressed"
+              },
+              "fullDescription": {
+                "text": "gzip is on but gzip_types is not set, so only text/html is compressed"
+              },
+              "help": {
+                "text": "Add `gzip_types text/css application/javascript application/json image/svg+xml text/plain text/xml application/xml;`",
+                "markdown": "Add `gzip_types text/css application/javascript application/json image/svg+xml text/plain text/xml application/xml;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "performance"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL022",
+              "name": "client-max-body-size",
+              "shortDescription": {
+                "text": "client_max_body_size is missing (1 MB default), too small, or unlimited"
+              },
+              "fullDescription": {
+                "text": "client_max_body_size is missing (1 MB default), too small, or unlimited"
+              },
+              "help": {
+                "text": "Set `client_max_body_size 64m;` (match upload_max_filesize in php.ini).",
+                "markdown": "Set `client_max_body_size 64m;` (match upload_max_filesize in php.ini)."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL030",
+              "name": "fastcgi-cache-zone-undefined",
+              "shortDescription": {
+                "text": "fastcgi_cache names a zone that no fastcgi_cache_path defines"
+              },
+              "fullDescription": {
+                "text": "fastcgi_cache names a zone that no fastcgi_cache_path defines"
+              },
+              "help": {
+                "text": "Define it in the http block: `fastcgi_cache_path /var/cache/nginx/wp levels=1:2 keys_zone=WORDPRESS:100m inactive=60m;`",
+                "markdown": "Define it in the http block: `fastcgi_cache_path /var/cache/nginx/wp levels=1:2 keys_zone=WORDPRESS:100m inactive=60m;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "cache"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL031",
+              "name": "fastcgi-cache-key-missing",
+              "shortDescription": {
+                "text": "fastcgi_cache is used without fastcgi_cache_key"
+              },
+              "fullDescription": {
+                "text": "fastcgi_cache is used without fastcgi_cache_key"
+              },
+              "help": {
+                "text": "Add `fastcgi_cache_key \"$scheme$request_method$host$request_uri\";`",
+                "markdown": "Add `fastcgi_cache_key \"$scheme$request_method$host$request_uri\";`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "cache"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL032",
+              "name": "fastcgi-cache-no-bypass",
+              "shortDescription": {
+                "text": "FastCGI cache without a bypass for logged-in users, carts and POST requests: private pages can be cached and shown to visitors"
+              },
+              "fullDescription": {
+                "text": "FastCGI cache without a bypass for logged-in users, carts and POST requests: private pages can be cached and shown to visitors"
+              },
+              "help": {
+                "text": "Skip the cache for logged-in users and carts, for example: `set $skip_cache 0; if ($http_cookie ~* \"comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_no_cache|wordpress_logged_in|woocommerce_items_in_cart\") { set $skip_cache 1; } fastcgi_cache_bypass $skip_cache; fastcgi_no_cache $skip_cache;`",
+                "markdown": "Skip the cache for logged-in users and carts, for example: `set $skip_cache 0; if ($http_cookie ~* \"comment_author|wordpress_[a-f0-9]+|wp-postpass|wordpress_no_cache|wordpress_logged_in|woocommerce_items_in_cart\") { set $skip_cache 1; } fastcgi_cache_bypass $skip_cache; fastcgi_no_cache $skip_cache;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "cache"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL033",
+              "name": "fastcgi-cache-valid-missing",
+              "shortDescription": {
+                "text": "fastcgi_cache without fastcgi_cache_valid caches only responses with cache headers"
+              },
+              "fullDescription": {
+                "text": "fastcgi_cache without fastcgi_cache_valid caches only responses with cache headers"
+              },
+              "help": {
+                "text": "Add `fastcgi_cache_valid 200 301 302 60m;` (and `fastcgi_cache_use_stale error timeout updating;`).",
+                "markdown": "Add `fastcgi_cache_valid 200 301 302 60m;` (and `fastcgi_cache_use_stale error timeout updating;`)."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "cache"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "1.0"
+              }
+            },
+            {
+              "id": "NWL040",
+              "name": "weak-ssl-protocols",
+              "shortDescription": {
+                "text": "ssl_protocols enables SSLv2, SSLv3, TLSv1 or TLSv1.1"
+              },
+              "fullDescription": {
+                "text": "ssl_protocols enables SSLv2, SSLv3, TLSv1 or TLSv1.1"
+              },
+              "help": {
+                "text": "Use `ssl_protocols TLSv1.2 TLSv1.3;`",
+                "markdown": "Use `ssl_protocols TLSv1.2 TLSv1.3;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "tls",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL041",
+              "name": "weak-ssl-ciphers",
+              "shortDescription": {
+                "text": "ssl_ciphers allows broken or weak ciphers (RC4, DES/3DES, MD5, NULL, EXPORT ...)"
+              },
+              "fullDescription": {
+                "text": "ssl_ciphers allows broken or weak ciphers (RC4, DES/3DES, MD5, NULL, EXPORT ...)"
+              },
+              "help": {
+                "text": "Use a current profile such as Mozilla's intermediate configuration, e.g. `ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;`",
+                "markdown": "Use a current profile such as Mozilla's intermediate configuration, e.g. `ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "tls",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL042",
+              "name": "ssl-directive-removed",
+              "shortDescription": {
+                "text": "`ssl on;` was removed in nginx 1.25.1"
+              },
+              "fullDescription": {
+                "text": "`ssl on;` was removed in nginx 1.25.1"
+              },
+              "help": {
+                "text": "Delete `ssl on;` and use `listen 443 ssl;`.",
+                "markdown": "Delete `ssl on;` and use `listen 443 ssl;`."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "tls",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL043",
+              "name": "listen-http2-deprecated",
+              "shortDescription": {
+                "text": "The http2 parameter of listen is deprecated since nginx 1.25.1"
+              },
+              "fullDescription": {
+                "text": "The http2 parameter of listen is deprecated since nginx 1.25.1"
+              },
+              "help": {
+                "text": "Use `listen 443 ssl;` plus `http2 on;` on nginx 1.25.1 and later.",
+                "markdown": "Use `listen 443 ssl;` plus `http2 on;` on nginx 1.25.1 and later."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "tls",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "1.0"
+              }
+            },
+            {
+              "id": "NWL044",
+              "name": "https-redirect-missing",
+              "shortDescription": {
+                "text": "A site is available over HTTPS but plain HTTP is served instead of redirected"
+              },
+              "fullDescription": {
+                "text": "A site is available over HTTPS but plain HTTP is served instead of redirected"
+              },
+              "help": {
+                "text": "Add a port 80 server that only redirects: `server { listen 80; listen [::]:80; server_name example.com; return 301 https://$host$request_uri; }`",
+                "markdown": "Add a port 80 server that only redirects: `server { listen 80; listen [::]:80; server_name example.com; return 301 https://$host$request_uri; }`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "tls",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL045",
+              "name": "listen-443-without-ssl",
+              "shortDescription": {
+                "text": "listen 443 without the ssl parameter speaks plain HTTP on the HTTPS port"
+              },
+              "fullDescription": {
+                "text": "listen 443 without the ssl parameter speaks plain HTTP on the HTTPS port"
+              },
+              "help": {
+                "text": "Use `listen 443 ssl;` (and `listen [::]:443 ssl;`).",
+                "markdown": "Use `listen 443 ssl;` (and `listen [::]:443 ssl;`)."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "tls",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL046",
+              "name": "ssl-protocols-unset",
+              "shortDescription": {
+                "text": "HTTPS server relies on the default ssl_protocols"
+              },
+              "fullDescription": {
+                "text": "HTTPS server relies on the default ssl_protocols"
+              },
+              "help": {
+                "text": "Set `ssl_protocols TLSv1.2 TLSv1.3;` explicitly in the http block.",
+                "markdown": "Set `ssl_protocols TLSv1.2 TLSv1.3;` explicitly in the http block."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "tls",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "1.0"
+              }
+            },
+            {
+              "id": "NWL050",
+              "name": "permalinks-try-files",
+              "shortDescription": {
+                "text": "Pretty permalinks are not routed to index.php"
+              },
+              "fullDescription": {
+                "text": "Pretty permalinks are not routed to index.php"
+              },
+              "help": {
+                "text": "In `location /` use `try_files $uri $uri/ /index.php?$args;`",
+                "markdown": "In `location /` use `try_files $uri $uri/ /index.php?$args;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL051",
+              "name": "php-location-no-file-check",
+              "shortDescription": {
+                "text": "The PHP location passes requests for non-existent scripts to PHP-FPM (path info tricks such as /uploads/image.jpg/x.php)"
+              },
+              "fullDescription": {
+                "text": "The PHP location passes requests for non-existent scripts to PHP-FPM (path info tricks such as /uploads/image.jpg/x.php)"
+              },
+              "help": {
+                "text": "Add `try_files $uri =404;` to the PHP location (snippets/fastcgi-php.conf on Debian/Ubuntu does this), and keep `cgi.fix_pathinfo=0` in php.ini.",
+                "markdown": "Add `try_files $uri =404;` to the PHP location (snippets/fastcgi-php.conf on Debian/Ubuntu does this), and keep `cgi.fix_pathinfo=0` in php.ini."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL052",
+              "name": "script-filename-missing",
+              "shortDescription": {
+                "text": "fastcgi_pass without SCRIPT_FILENAME: PHP-FPM answers with blank pages"
+              },
+              "fullDescription": {
+                "text": "fastcgi_pass without SCRIPT_FILENAME: PHP-FPM answers with blank pages"
+              },
+              "help": {
+                "text": "Use `include fastcgi.conf;` (it sets SCRIPT_FILENAME), or add `fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;` after `include fastcgi_params;`.",
+                "markdown": "Use `include fastcgi.conf;` (it sets SCRIPT_FILENAME), or add `fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;` after `include fastcgi_params;`."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL060",
+              "name": "wp-login-no-rate-limit",
+              "shortDescription": {
+                "text": "wp-login.php has no limit_req rate limiting (password brute force)"
+              },
+              "fullDescription": {
+                "text": "wp-login.php has no limit_req rate limiting (password brute force)"
+              },
+              "help": {
+                "text": "In the http block: `limit_req_zone $binary_remote_addr zone=wplogin:10m rate=5r/m;` and in the server: `location = /wp-login.php { limit_req zone=wplogin burst=5 nodelay; include snippets/fastcgi-php.conf; fastcgi_pass ...; }`",
+                "markdown": "In the http block: `limit_req_zone $binary_remote_addr zone=wplogin:10m rate=5r/m;` and in the server: `location = /wp-login.php { limit_req zone=wplogin burst=5 nodelay; include snippets/fastcgi-php.conf; fastcgi_pass ...; }`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL061",
+              "name": "limit-req-zone-undefined",
+              "shortDescription": {
+                "text": "limit_req uses a zone that no limit_req_zone defines"
+              },
+              "fullDescription": {
+                "text": "limit_req uses a zone that no limit_req_zone defines"
+              },
+              "help": {
+                "text": "Define the zone in the http block with `limit_req_zone`.",
+                "markdown": "Define the zone in the http block with `limit_req_zone`."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "wordpress",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL070",
+              "name": "if-in-location",
+              "shortDescription": {
+                "text": "`if` inside a location does more than return or rewrite (\"if is evil\")"
+              },
+              "fullDescription": {
+                "text": "`if` inside a location does more than return or rewrite (\"if is evil\")"
+              },
+              "help": {
+                "text": "Inside a location, only use `return` and `rewrite ... last` in an `if`. Use try_files, map or separate locations for the rest.",
+                "markdown": "Inside a location, only use `return` and `rewrite ... last` in an `if`. Use try_files, map or separate locations for the rest."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "correctness"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL071",
+              "name": "if-host-redirect",
+              "shortDescription": {
+                "text": "Redirecting by testing $host in an `if`"
+              },
+              "fullDescription": {
+                "text": "Redirecting by testing $host in an `if`"
+              },
+              "help": {
+                "text": "Use a separate server block for the other name: `server { server_name www.example.com; return 301 https://example.com$request_uri; }`",
+                "markdown": "Use a separate server block for the other name: `server { server_name www.example.com; return 301 https://example.com$request_uri; }`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "correctness"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "1.0"
+              }
+            },
+            {
+              "id": "NWL072",
+              "name": "if-file-check",
+              "shortDescription": {
+                "text": "File existence check with `if` and rewrite instead of try_files"
+              },
+              "fullDescription": {
+                "text": "File existence check with `if` and rewrite instead of try_files"
+              },
+              "help": {
+                "text": "Replace with `try_files $uri $uri/ /index.php?$args;`",
+                "markdown": "Replace with `try_files $uri $uri/ /index.php?$args;`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "correctness"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
+              "id": "NWL073",
+              "name": "alias-traversal",
+              "shortDescription": {
+                "text": "Prefix location without a trailing slash uses an alias with one (path traversal)"
+              },
+              "fullDescription": {
+                "text": "Prefix location without a trailing slash uses an alias with one (path traversal)"
+              },
+              "help": {
+                "text": "Make both end with a slash: `location /files/ { alias /srv/files/; }` (or use root).",
+                "markdown": "Make both end with a slash: `location /files/ { alias /srv/files/; }` (or use root)."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "security",
+                  "security"
+                ],
+                "precision": "high",
+                "problem.severity": "error",
+                "security-severity": "8.0"
+              }
+            },
+            {
+              "id": "NWL074",
+              "name": "duplicate-server-name",
+              "shortDescription": {
+                "text": "The same server_name is used by two servers on the same port"
+              },
+              "fullDescription": {
+                "text": "The same server_name is used by two servers on the same port"
+              },
+              "help": {
+                "text": "Merge the server blocks or remove the name from one of them.",
+                "markdown": "Merge the server blocks or remove the name from one of them."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "correctness"
+                ],
+                "precision": "high",
+                "problem.severity": "warning",
+                "security-severity": "5.5"
+              }
+            },
+            {
+              "id": "NWL075",
+              "name": "root-in-location",
+              "shortDescription": {
+                "text": "root is set inside locations but not in the server block"
+              },
+              "fullDescription": {
+                "text": "root is set inside locations but not in the server block"
+              },
+              "help": {
+                "text": "Set root once in the server block; locations inherit it.",
+                "markdown": "Set root once in the server block; locations inherit it."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "correctness"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "1.0"
+              }
+            },
+            {
+              "id": "NWL090",
+              "name": "include-not-found",
+              "shortDescription": {
+                "text": "An include matched no file, so rules that depend on it were skipped"
+              },
+              "fullDescription": {
+                "text": "An include matched no file, so rules that depend on it were skipped"
+              },
+              "help": {
+                "text": "Lint on the server, pass --prefix /etc/nginx, or copy the snippets into the repo.",
+                "markdown": "Lint on the server, pass --prefix /etc/nginx, or copy the snippets into the repo."
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "syntax"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "1.0"
+              }
+            }
+          ]
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "NWL001",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "server_tokens is not set (default: on) (not set in this file; ignore if nginx.conf sets it in the http block) Fix: Add `server_tokens off;` to the http block."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "cac3382ee9939838d9e4205a1ef62148b5aaa9c2868a0e0165bf840eb7fc650a"
+          },
+          "properties": {
+            "severity": "info",
+            "security-severity": "1.0"
+          }
+        },
+        {
+          "ruleId": "NWL003",
+          "ruleIndex": 3,
+          "level": "error",
+          "message": {
+            "text": "hidden files are served: /.git/config, /.env, /.htaccess, /.user.ini, /.svn/entries (handled by location / (line 9)) Fix: Deny hidden files but keep ACME challenges working: `location ~ /\\.(?!well-known/) { deny all; }`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "e65639c8aa46aa880b01772745da8ec57548074ad18cd13e5093e7f1bc74d86f"
+          },
+          "properties": {
+            "severity": "high",
+            "security-severity": "8.0"
+          }
+        },
+        {
+          "ruleId": "NWL004",
+          "ruleIndex": 4,
+          "level": "error",
+          "message": {
+            "text": "these paths would be downloadable if the files exist: /wp-config.php.bak, /wp-config.php~, /wp-config.php.save, /wp-config.old, /backup.sql, /database.sql.gz and 7 more Fix: Deny them, for example: `location ~* \\.(sql|sql\\.gz|bak|old|orig|save|swp|zip|tar|tar\\.gz|tgz|gz|wpress|log)$|~$ { deny all; }` and `location ~* ^/wp-content/(ai1wm-backups|updraft|backups-dup-lite|uploads/wc-logs)/ { deny all; }`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "1159fe7109f5ea7976d594e5ba2f4fe5ec1185090b54c8658592661ba5402848"
+          },
+          "properties": {
+            "severity": "high",
+            "security-severity": "8.0"
+          }
+        },
+        {
+          "ruleId": "NWL005",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "/wp-config.php is passed to PHP; nothing is printed today, but a PHP-FPM outage or misconfiguration would expose the source Fix: Add `location = /wp-config.php { deny all; }` as defence in depth."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "20b2271af8c84a44e1ee03be29ca6634071ca57a827754636ec7aba6de643ff0"
+          },
+          "properties": {
+            "severity": "low",
+            "security-severity": "3.0"
+          }
+        },
+        {
+          "ruleId": "NWL006",
+          "ruleIndex": 6,
+          "level": "warning",
+          "message": {
+            "text": "/xmlrpc.php is executed by PHP (handled by location ~ \\.php$ (line 18)) Fix: Block it: `location = /xmlrpc.php { deny all; access_log off; log_not_found off; }`. Jetpack and some apps need it: allow their addresses before `deny all`."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "94fbac8812d316474385c7a03aea382cfd6b516a587900ababf5efed7c288d51"
+          },
+          "properties": {
+            "severity": "medium",
+            "security-severity": "5.5"
+          }
+        },
+        {
+          "ruleId": "NWL007",
+          "ruleIndex": 7,
+          "level": "error",
+          "message": {
+            "text": "an uploaded .php file would run: /wp-content/uploads/2026/01/shell.php is handled by location ~ \\.php$ (line 18) Fix: Deny PHP in uploads with a regex location placed BEFORE the PHP location: `location ~* ^/wp-content/uploads/.*\\.(php|phtml|phar)$ { deny all; }`. A prefix `location /wp-content/uploads/` does not stop the regex PHP location unless it uses `^~`."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "c34a0e03314b453497dd1c6e4fa4286d598c8b230d7cfb26feac79c31e1039f0"
+          },
+          "properties": {
+            "severity": "high",
+            "security-severity": "8.0"
+          }
+        },
+        {
+          "ruleId": "NWL012",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "X-Content-Type-Options header is not set Fix: Add `add_header X-Content-Type-Options nosniff always;`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "ad5f032e8f096c057f9250133c7e5274a0c8d87e59e4e7db9423384810628161"
+          },
+          "properties": {
+            "severity": "low",
+            "security-severity": "3.0"
+          }
+        },
+        {
+          "ruleId": "NWL013",
+          "ruleIndex": 13,
+          "level": "note",
+          "message": {
+            "text": "Referrer-Policy header is not set Fix: Add `add_header Referrer-Policy \"strict-origin-when-cross-origin\" always;`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "226f9af07ed16a211a3c0fe264d8a5a78907100d5717ae559e8d170b6c6718ff"
+          },
+          "properties": {
+            "severity": "low",
+            "security-severity": "3.0"
+          }
+        },
+        {
+          "ruleId": "NWL014",
+          "ruleIndex": 14,
+          "level": "note",
+          "message": {
+            "text": "Content-Security-Policy header is not set Fix: Start with a report-only policy and tighten it: `add_header Content-Security-Policy-Report-Only \"default-src 'self'; ...\" always;` WordPress plugins often need inline scripts, so test before enforcing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "175c583eb7c27be35391a1a6d757f34e1509326973b6ea8ca40703e83484601c"
+          },
+          "properties": {
+            "severity": "info",
+            "security-severity": "1.0"
+          }
+        },
+        {
+          "ruleId": "NWL016",
+          "ruleIndex": 16,
+          "level": "note",
+          "message": {
+            "text": "pages can be framed by other sites (no X-Frame-Options or frame-ancestors) Fix: Add `add_header X-Frame-Options \"SAMEORIGIN\" always;` or `frame-ancestors 'self'` in the Content-Security-Policy."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "d9f8ac4d40ddb626e013945c7237ad000de2ae90a087a4c1c5b8f5e3f960111d"
+          },
+          "properties": {
+            "severity": "low",
+            "security-severity": "3.0"
+          }
+        },
+        {
+          "ruleId": "NWL020",
+          "ruleIndex": 18,
+          "level": "note",
+          "message": {
+            "text": "compression is not enabled (gzip defaults to off) (not set in this file; ignore if nginx.conf sets it in the http block) Fix: Add `gzip on;` with `gzip_types` (and `brotli on;` if the module is installed)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "5adc65ff61c225189ed23351cbb83e14f400afb61470e12b2627c1cbcc3a6569"
+          },
+          "properties": {
+            "severity": "info",
+            "security-severity": "1.0"
+          }
+        },
+        {
+          "ruleId": "NWL022",
+          "ruleIndex": 20,
+          "level": "note",
+          "message": {
+            "text": "client_max_body_size is not set: uploads over 1 MB fail with 413 Request Entity Too Large (not set in this file; ignore if nginx.conf sets it in the http block) Fix: Set `client_max_body_size 64m;` (match upload_max_filesize in php.ini)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "43ee89e51ba6c6597972af783b0d257c3b5cb4fc4338d62b7742d327aca96ecc"
+          },
+          "properties": {
+            "severity": "info",
+            "security-severity": "1.0"
+          }
+        },
+        {
+          "ruleId": "NWL060",
+          "ruleIndex": 35,
+          "level": "warning",
+          "message": {
+            "text": "/wp-login.php is handled by location ~ \\.php$ (line 18) without limit_req Fix: In the http block: `limit_req_zone $binary_remote_addr zone=wplogin:10m rate=5r/m;` and in the server: `location = /wp-login.php { limit_req zone=wplogin burst=5 nodelay; include snippets/fastcgi-php.conf; fastcgi_pass ...; }`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "d9a36b6e17d5a94d117938ae8bfa734b8c9d9d3faa2e2feac169c192d8b2f1e8"
+          },
+          "properties": {
+            "severity": "medium",
+            "security-severity": "5.5"
+          }
+        },
+        {
+          "ruleId": "NWL002",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "autoindex on lists directory contents, including backups and uploads Fix: Remove `autoindex on;` (the default is off), or limit it to a dedicated location."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "681ec1cc8725b8ff2251aaa4479563d527e680981f24bb506460f5b2f3f20658"
+          },
+          "properties": {
+            "severity": "medium",
+            "security-severity": "5.5"
+          }
+        },
+        {
+          "ruleId": "NWL051",
+          "ruleIndex": 33,
+          "level": "warning",
+          "message": {
+            "text": "PHP location has no `try_files $uri =404;`: requests for scripts that do not exist reach PHP-FPM Fix: Add `try_files $uri =404;` to the PHP location (snippets/fastcgi-php.conf on Debian/Ubuntu does this), and keep `cgi.fix_pathinfo=0` in php.ini."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "fa4b2359b257acfaf6231ac5778ba8378223c529e7efcf5c1ea5e1d95234ffd5"
+          },
+          "properties": {
+            "severity": "medium",
+            "security-severity": "5.5"
+          }
+        },
+        {
+          "ruleId": "NWL052",
+          "ruleIndex": 34,
+          "level": "warning",
+          "message": {
+            "text": "no SCRIPT_FILENAME fastcgi_param in scope (fastcgi_params does not set it) Fix: Use `include fastcgi.conf;` (it sets SCRIPT_FILENAME), or add `fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;` after `include fastcgi_params;`."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "131667efe7fd28239087f8bdfcf7002a9a19a7d9716c06c2e7065ff18877fcca"
+          },
+          "properties": {
+            "severity": "medium",
+            "security-severity": "5.5"
+          }
+        }
+      ]
+    }
+  ]
+}

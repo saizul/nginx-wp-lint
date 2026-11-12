@@ -1,0 +1,48 @@
+# Lint the nginx configuration kept in this repository on every push and pull
+# request, and show the results in the Security > Code scanning tab and as
+# pull request annotations. Copy to .github/workflows/nginx-lint.yml.
+name: nginx config lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write   # upload SARIF
+
+jobs:
+  nginx-wp-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install nginx-wp-lint
+        run: pip install "git+https://github.com/saizul/nginx-wp-lint.git@v0.1.0"
+
+      - name: Lint
+        # Keep going on findings so the SARIF file is always uploaded;
+        # the last step fails the job instead.
+        run: |
+          set +e
+          nginx-wp-lint nginx/ --prefix nginx/ -f sarif -o nginx-wp-lint.sarif
+          echo "status=$?" >> "$GITHUB_ENV"
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: nginx-wp-lint.sarif
+          category: nginx-wp-lint
+
+      - name: Fail on problems
+        run: |
+          if [ "$status" != "0" ]; then
+            nginx-wp-lint nginx/ --prefix nginx/ -f github
+            exit "$status"
+          fi

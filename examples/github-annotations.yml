@@ -1,0 +1,15 @@
+# Lighter alternative without code scanning: inline annotations only.
+name: nginx config lint
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "git+https://github.com/saizul/nginx-wp-lint.git@v0.1.0"
+      - run: nginx-wp-lint nginx/ --prefix nginx/ -f github --fail-on medium
