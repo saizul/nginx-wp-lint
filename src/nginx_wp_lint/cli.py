@@ -9,6 +9,7 @@ import textwrap
 from collections.abc import Sequence
 from typing import TextIO
 
+from . import baseline as baseline_mod
 from ._version import __version__
 from .config import ConfigError, Settings, apply_dict, discover, load_file
 from .linter import lint_paths
@@ -58,6 +59,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-includes", action="store_true", help="do not follow include")
     p.add_argument("--base", metavar="DIR", default=".",
                    help="report paths relative to DIR (default: current directory)")
+    p.add_argument("--baseline", metavar="FILE",
+                   help="ignore problems recorded in this baseline file and report only new "
+                        "ones (see --write-baseline)")
+    p.add_argument("--write-baseline", metavar="FILE",
+                   help="record every current problem in FILE and exit 0, so later runs "
+                        "with --baseline only fail on new problems")
+    p.add_argument("--no-baseline", action="store_true",
+                   help="ignore a baseline set in the config file")
     p.add_argument("-q", "--quiet", action="store_true", help="text format: no hints or summary")
     p.add_argument("--list-rules", action="store_true", help="list rules and exit")
     p.add_argument("--explain", metavar="RULE", help="describe one rule and exit")
@@ -98,6 +107,10 @@ def _settings(args: argparse.Namespace) -> Settings:
         cli["prefix"] = args.prefix
     if args.no_includes:
         cli["follow_includes"] = False
+    if args.baseline:
+        cli["baseline"] = args.baseline
+    if args.no_baseline:
+        cli["baseline"] = None
     return apply_dict(settings, cli, source="command line")
 
 
@@ -144,6 +157,22 @@ def print_tree(paths: list[str], settings: Settings, out: TextIO) -> None:
             emit(d, 0)
 
 
+def write_baseline(result, path: str, base: str, err: TextIO) -> int:
+    """Store every current finding in a baseline file."""
+    data = baseline_mod.Baseline.from_findings(result.findings, base=base)
+    try:
+        data.write(path)
+    except baseline_mod.BaselineError as exc:
+        print(f"nginx-wp-lint: error: {exc}", file=err)
+        return EXIT_USAGE
+    print(f"wrote baseline {path} ({len(data.entries)} problem(s))", file=err)
+    if result.parse_errors:
+        print("nginx-wp-lint: warning: parse errors are recorded in the baseline too; "
+              "fix them before relying on it", file=err)
+        return EXIT_PARSE
+    return EXIT_OK
+
+
 def default_paths() -> list[str]:
     return ["/etc/nginx"] if os.path.isdir("/etc/nginx") else ["."]
 
@@ -181,6 +210,22 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None,
     if not result.roots:
         print("nginx-wp-lint: error: no configuration files found", file=err)
         return EXIT_USAGE
+    if args.write_baseline:
+        return write_baseline(result, args.write_baseline, args.base, err)
+    if settings.baseline:
+        try:
+            accepted = baseline_mod.load(settings.baseline)
+        except baseline_mod.BaselineError as exc:
+            print(f"nginx-wp-lint: error: {exc}", file=err)
+            return EXIT_USAGE
+        match = baseline_mod.apply(result.findings, accepted, base=args.base)
+        result.findings = match.new
+        result.baselined = match.matched
+        result.baseline_stale = len(match.stale)
+        if match.stale and not args.quiet:
+            print(f"nginx-wp-lint: note: {len(match.stale)} baseline entr"
+                  f"{'y' if len(match.stale) == 1 else 'ies'} no longer match; run "
+                  f"--write-baseline {settings.baseline} to prune", file=err)
     text = render(result, args.format, base=args.base, quiet=args.quiet)
     if args.output:
         try:

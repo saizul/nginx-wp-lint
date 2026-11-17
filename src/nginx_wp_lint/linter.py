@@ -21,6 +21,8 @@ class LintResult:
     roots: list[str] = field(default_factory=list)
     parse_errors: int = 0
     suppressed: int = 0
+    baselined: int = 0  # findings accepted by --baseline
+    baseline_stale: int = 0  # baseline entries that no longer match anything
     warnings: list[str] = field(default_factory=list)
 
     def counts(self) -> dict[str, int]:

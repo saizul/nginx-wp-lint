@@ -104,6 +104,10 @@ $ nginx-wp-lint --explain NWL015
 
 # See exactly what was parsed, includes spliced in
 $ nginx-wp-lint --print-tree /etc/nginx
+
+# Accept today's problems, fail only on new ones
+$ nginx-wp-lint deploy/nginx --write-baseline .nginx-wp-lint-baseline.json
+$ nginx-wp-lint deploy/nginx --baseline .nginx-wp-lint-baseline.json
 ```
 
 A directory that contains `nginx.conf` is linted through that file (and its
@@ -125,7 +129,10 @@ extension). A file that another linted file includes is not linted twice.
 | `--exclude GLOB` | Skip matching files (repeatable) |
 | `--prefix DIR` | Resolve relative includes against DIR, like `nginx -p` |
 | `--no-includes` | Do not follow `include` |
-| `--base DIR` | Report paths relative to DIR |
+| `--base DIR` | Report paths relative to DIR (also used for baseline fingerprints) |
+| `--baseline FILE` | Do not report problems recorded in this baseline file |
+| `--write-baseline FILE` | Record all current problems in FILE and exit 0 (3 if a file did not parse) |
+| `--no-baseline` | Ignore a `baseline` set in the config file |
 | `-q, --quiet` | Text output without hints and summary |
 
 ### Exit codes
@@ -231,6 +238,7 @@ disable = ["csp-missing", "NWL075"]
 exclude = ["**/legacy/*.conf"]
 # prefix = "/etc/nginx"
 # follow_includes = true
+# baseline = ".nginx-wp-lint-baseline.json"   # relative to this file
 
 [severity]
 NWL013 = "info"
@@ -271,6 +279,40 @@ server {
 Rules are named by id or name, comma separated, or `all`. Unknown names
 produce a warning. Suppressed findings are counted in the summary.
 
+### Baselines
+
+A large existing configuration can have dozens of findings that cannot all be
+fixed before the linter is switched on in CI. A baseline records them once, so
+that later runs only report, and fail on, problems that are new:
+
+```console
+$ nginx-wp-lint deploy/nginx --write-baseline .nginx-wp-lint-baseline.json
+wrote baseline .nginx-wp-lint-baseline.json (23 problem(s))
+$ git add .nginx-wp-lint-baseline.json
+$ nginx-wp-lint deploy/nginx --baseline .nginx-wp-lint-baseline.json
+no problems in 9 files, 23 baselined
+```
+
+Or set `baseline = ".nginx-wp-lint-baseline.json"` in the config file (the
+path is relative to the config file; `--no-baseline` turns it off for one run).
+
+- **What is matched.** Each entry is a fingerprint of the rule id, the file
+  path relative to `--base`, the server context, the message and the
+  whitespace-normalised text of the reported line. Line numbers are not part of
+  it, so adding or removing lines elsewhere keeps the baseline valid; editing
+  the reported directive (or the `server {` line for server-level findings)
+  makes the problem show up again. Run with the same `--base` as when the
+  baseline was written.
+- **Duplicates are counted.** If the baseline holds two identical entries, a
+  third copy of the same problem is reported.
+- **Fixed problems.** Entries that no longer match anything are counted as
+  `baseline_stale` in JSON output and mentioned on stderr (unless `-q`). Run
+  `--write-baseline` again to prune them; review the diff of the baseline file
+  like any other change.
+- Inline suppressions, `--disable` and `--min-severity` are applied first, so
+  baselined findings are only those that would otherwise be reported. JSON
+  output reports the count as `summary.baselined`.
+
 ## Examples
 
 - [`examples/wordpress-hardened/`](examples/wordpress-hardened/): a complete
@@ -306,6 +348,10 @@ steps:
 Findings then appear under Security > Code scanning and on pull requests. Paths
 in SARIF are relative to the working directory (use `--base` to change that),
 which is what GitHub expects after `actions/checkout`.
+
+To adopt the linter on an existing repository without fixing everything at
+once, commit a baseline (see [Baselines](#baselines)) and add
+`--baseline .nginx-wp-lint-baseline.json` to the command above.
 
 ### Pre-deploy check on a server
 

@@ -9,6 +9,20 @@ but its ID and name keep their meaning.
 
 ## [Unreleased]
 
+### Added
+
+- Baseline files: `--write-baseline FILE` records every current problem, and
+  `--baseline FILE` (or `baseline = "..."` in the config file) reports and
+  fails only on problems that are not in it. Fingerprints ignore line numbers,
+  so unrelated edits keep the baseline valid, and identical problems are
+  counted. Entries that no longer match are reported as stale on stderr and as
+  `summary.baseline_stale` in JSON output; `--no-baseline` ignores a configured
+  baseline.
+- JSON output: `summary.baselined` and `summary.baseline_stale`; the text
+  summary mentions baselined problems.
+- `CODE_OF_CONDUCT.md`, issue forms for bug reports and feature requests, and
+  a pull request template.
+
 ## [0.1.0] - 2026-11-12
 
 First public release.

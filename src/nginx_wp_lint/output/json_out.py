@@ -19,6 +19,8 @@ def render_json(result: LintResult, base: str = ".") -> str:
             "files": len(result.files),
             "problems": len(result.findings),
             "suppressed": result.suppressed,
+            "baselined": result.baselined,
+            "baseline_stale": result.baseline_stale,
             "parse_errors": result.parse_errors,
             "by_severity": result.counts(),
         },

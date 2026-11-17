@@ -25,6 +25,8 @@ def render_text(result: LintResult, base: str = ".", quiet: bool = False) -> str
             summary = f"no problems in {files} file{'s' if files != 1 else ''}"
         if result.suppressed:
             summary += f", {result.suppressed} suppressed"
+        if result.baselined:
+            summary += f", {result.baselined} baselined"
         if lines:
             lines.append("")
         lines.append(summary)
