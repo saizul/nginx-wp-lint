@@ -74,6 +74,7 @@ src/nginx_wp_lint/
     rules/          base.py plus security, headers, performance, tls,
                     wordpress, correctness, and the registry in __init__.py
     suppress.py     inline comments
+    baseline.py     --baseline / --write-baseline fingerprints
     config.py       TOML/YAML settings
     linter.py       runs rules, applies settings and suppressions
     output/         text, json, sarif, github
@@ -90,6 +91,11 @@ tests/              pytest suite and fixture configurations
 2. Add the class to the module's `RULES` tuple.
 3. Write tests in the matching `tests/test_rules_*.py` file, update fixture
    expectations, and add the README row.
+
+## Code of conduct
+
+Everyone taking part in this project is expected to follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Pull requests
 

@@ -22,7 +22,7 @@ CONFIG_NAMES = (".nginx-wp-lint.toml", "nginx-wp-lint.toml", ".nginx-wp-lint.yml
                 ".nginx-wp-lint.yaml")
 
 KNOWN_KEYS = {"fail_on", "min_severity", "disable", "enable_only", "exclude", "severity",
-              "options", "prefix", "follow_includes"}
+              "options", "prefix", "follow_includes", "baseline"}
 
 
 class ConfigError(Exception):
@@ -40,6 +40,7 @@ class Settings:
     min_severity: Severity = Severity.INFO
     prefix: str | None = None
     follow_includes: bool = True
+    baseline: str | None = None
     source: str | None = None
 
     def rule_enabled(self, rule_id: str) -> bool:
@@ -123,6 +124,11 @@ def apply_dict(settings: Settings, data: dict[str, Any], source: str = "config")
         if not isinstance(data["follow_includes"], bool):
             raise ConfigError("follow_includes must be true or false")
         settings.follow_includes = data["follow_includes"]
+    if "baseline" in data:
+        value = data["baseline"]
+        if value is not None and not isinstance(value, str):
+            raise ConfigError("baseline must be a file path")
+        settings.baseline = value or None
     return settings
 
 
@@ -165,7 +171,12 @@ def load_file(path: str | Path, settings: Settings | None = None) -> Settings:
     except OSError as exc:
         raise ConfigError(f"cannot read {p}: {exc.strerror or exc}") from exc
     settings.source = str(p)
-    return apply_dict(settings, data, source=str(p))
+    before = settings.baseline
+    settings = apply_dict(settings, data, source=str(p))
+    if settings.baseline and settings.baseline != before and not os.path.isabs(settings.baseline):
+        # A baseline named in a config file is relative to that file.
+        settings.baseline = os.path.normpath(os.path.join(p.parent, settings.baseline))
+    return settings
 
 
 def discover(start: str | Path = ".") -> Path | None:
