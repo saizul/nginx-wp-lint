@@ -26,9 +26,11 @@ naive-site.conf:2:1: medium NWL060 wp-login-no-rate-limit: /wp-login.php is hand
     hint: In the http block: `limit_req_zone $binary_remote_addr zone=wplogin:10m rate=5r/m;` and in the server: `location = /wp-login.php { limit_req zone=wplogin burst=5 nodelay; include snippets/fastcgi-php.conf; fastcgi_pass ...; }`
 naive-site.conf:7:5: medium NWL002 autoindex-on: autoindex on lists directory contents, including backups and uploads
     hint: Remove `autoindex on;` (the default is off), or limit it to a dedicated location.
+naive-site.conf:9:5: low NWL023 static-assets-no-cache: CSS and JavaScript are served without expires or Cache-Control (location / at line 9), so browsers revalidate them on every page view [blog.example.com:80]
+    hint: Add a static files location, e.g. `location ~* \.(?:css|js|mjs|jpe?g|png|gif|webp|avif|svg|ico|woff2?)$ { expires 30d; access_log off; try_files $uri =404; }`
 naive-site.conf:18:5: medium NWL051 php-location-no-file-check: PHP location has no `try_files $uri =404;`: requests for scripts that do not exist reach PHP-FPM [blog.example.com:80]
     hint: Add `try_files $uri =404;` to the PHP location (snippets/fastcgi-php.conf on Debian/Ubuntu does this), and keep `cgi.fix_pathinfo=0` in php.ini.
 naive-site.conf:18:5: medium NWL052 script-filename-missing: no SCRIPT_FILENAME fastcgi_param in scope (fastcgi_params does not set it) [blog.example.com:80]
     hint: Use `include fastcgi.conf;` (it sets SCRIPT_FILENAME), or add `fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;` after `include fastcgi_params;`.
 
-16 problems (3 high, 5 medium, 4 low, 4 info) in 1 file
+17 problems (3 high, 5 medium, 5 low, 4 info) in 1 file

@@ -596,6 +596,33 @@
               }
             },
             {
+              "id": "NWL023",
+              "name": "static-assets-no-cache",
+              "shortDescription": {
+                "text": "CSS, JavaScript and images are served without a cache lifetime (expires or Cache-Control)"
+              },
+              "fullDescription": {
+                "text": "CSS, JavaScript and images are served without a cache lifetime (expires or Cache-Control)"
+              },
+              "help": {
+                "text": "Add a static files location, e.g. `location ~* \\.(?:css|js|mjs|jpe?g|png|gif|webp|avif|svg|ico|woff2?)$ { expires 30d; access_log off; try_files $uri =404; }`",
+                "markdown": "Add a static files location, e.g. `location ~* \\.(?:css|js|mjs|jpe?g|png|gif|webp|avif|svg|ico|woff2?)$ { expires 30d; access_log off; try_files $uri =404; }`"
+              },
+              "helpUri": "https://github.com/saizul/nginx-wp-lint#rule-reference",
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "nginx",
+                  "performance"
+                ],
+                "precision": "high",
+                "problem.severity": "recommendation",
+                "security-severity": "3.0"
+              }
+            },
+            {
               "id": "NWL030",
               "name": "fastcgi-cache-zone-undefined",
               "shortDescription": {
@@ -1588,7 +1615,7 @@
         },
         {
           "ruleId": "NWL060",
-          "ruleIndex": 35,
+          "ruleIndex": 36,
           "level": "warning",
           "message": {
             "text": "/wp-login.php is handled by location ~ \\.php$ (line 18) without limit_req Fix: In the http block: `limit_req_zone $binary_remote_addr zone=wplogin:10m rate=5r/m;` and in the server: `location = /wp-login.php { limit_req zone=wplogin burst=5 nodelay; include snippets/fastcgi-php.conf; fastcgi_pass ...; }`"
@@ -1645,8 +1672,37 @@
           }
         },
         {
+          "ruleId": "NWL023",
+          "ruleIndex": 21,
+          "level": "note",
+          "message": {
+            "text": "CSS and JavaScript are served without expires or Cache-Control (location / at line 9), so browsers revalidate them on every page view Fix: Add a static files location, e.g. `location ~* \\.(?:css|js|mjs|jpe?g|png|gif|webp|avif|svg|ico|woff2?)$ { expires 30d; access_log off; try_files $uri =404; }`"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "naive-site.conf",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "nginxWpLint/v1": "752e88f82a90c1179cde4e98447dcf147b27dde4072467aba2d6a40de59275f4"
+          },
+          "properties": {
+            "severity": "low",
+            "security-severity": "3.0"
+          }
+        },
+        {
           "ruleId": "NWL051",
-          "ruleIndex": 33,
+          "ruleIndex": 34,
           "level": "warning",
           "message": {
             "text": "PHP location has no `try_files $uri =404;`: requests for scripts that do not exist reach PHP-FPM Fix: Add `try_files $uri =404;` to the PHP location (snippets/fastcgi-php.conf on Debian/Ubuntu does this), and keep `cgi.fix_pathinfo=0` in php.ini."
@@ -1675,7 +1731,7 @@
         },
         {
           "ruleId": "NWL052",
-          "ruleIndex": 34,
+          "ruleIndex": 35,
           "level": "warning",
           "message": {
             "text": "no SCRIPT_FILENAME fastcgi_param in scope (fastcgi_params does not set it) Fix: Use `include fastcgi.conf;` (it sets SCRIPT_FILENAME), or add `fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;` after `include fastcgi_params;`."

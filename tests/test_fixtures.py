@@ -15,35 +15,38 @@ BAD = FIXTURES / "bad"
 
 COMMON_FRAGMENT = {"NWL001", "NWL012", "NWL013", "NWL014", "NWL016", "NWL020"}
 WP_EXPOSED = {"NWL003", "NWL004", "NWL005", "NWL006", "NWL007"}
+# PHP sites whose CSS, JavaScript and images have no cache lifetime.
+NO_STATIC_CACHE = {"NWL023"}
 
 EXPECTED = {
     "naive-wordpress.conf": COMMON_FRAGMENT | WP_EXPOSED | {
-        "NWL002", "NWL022", "NWL051", "NWL052", "NWL060"},
-    "tls-weak.conf": {"NWL001", "NWL003", "NWL004", "NWL005", "NWL006", "NWL007", "NWL010",
-                      "NWL011", "NWL012", "NWL013", "NWL014", "NWL016", "NWL017", "NWL020",
-                      "NWL022", "NWL040", "NWL041", "NWL042", "NWL043", "NWL046", "NWL060"},
+        "NWL002", "NWL022", "NWL051", "NWL052", "NWL060"} | NO_STATIC_CACHE,
+    "tls-weak.conf": NO_STATIC_CACHE | {
+        "NWL001", "NWL003", "NWL004", "NWL005", "NWL006", "NWL007", "NWL010", "NWL011", "NWL012",
+        "NWL013", "NWL014", "NWL016", "NWL017", "NWL020", "NWL022", "NWL040", "NWL041", "NWL042",
+        "NWL043", "NWL046", "NWL060"},
     "no-redirect.conf": COMMON_FRAGMENT | {"NWL003", "NWL004", "NWL008", "NWL010", "NWL022",
-                                           "NWL044", "NWL046"},
+                                           "NWL044", "NWL046"} | NO_STATIC_CACHE,
     "header-inheritance.conf": {"NWL001", "NWL003", "NWL004", "NWL008", "NWL015", "NWL017",
                                 "NWL020", "NWL022", "NWL046"},
     "fastcgi-cache.conf": {"NWL003", "NWL004", "NWL005", "NWL006", "NWL007", "NWL012",
                            "NWL013", "NWL014", "NWL016", "NWL030", "NWL031", "NWL032",
-                           "NWL033", "NWL061"},
+                           "NWL033", "NWL061"} | NO_STATIC_CACHE,
     "pitfalls.conf": COMMON_FRAGMENT | {"NWL005", "NWL006", "NWL007", "NWL022", "NWL051",
                                         "NWL060", "NWL070", "NWL071", "NWL072", "NWL073",
                                         "NWL074", "NWL075"},
     "dotfiles-partial.conf": COMMON_FRAGMENT | {"NWL004", "NWL005", "NWL006", "NWL007",
-                                                "NWL009", "NWL022", "NWL060"},
+                                                "NWL009", "NWL022", "NWL060"} | NO_STATIC_CACHE,
     "static-only.conf": {"NWL001", "NWL012", "NWL013", "NWL014", "NWL016", "NWL020"},
-    "php-source.conf": COMMON_FRAGMENT | {"NWL003", "NWL004", "NWL008", "NWL022"},
+    "php-source.conf": COMMON_FRAGMENT | {"NWL003", "NWL004", "NWL008", "NWL022"} | NO_STATIC_CACHE,
     "if-block-guard.conf": COMMON_FRAGMENT | {"NWL004", "NWL005", "NWL007", "NWL022",
-                                              "NWL060"},
+                                              "NWL060"} | NO_STATIC_CACHE,
     "lua-and-quotes.conf": COMMON_FRAGMENT | WP_EXPOSED | {"NWL022", "NWL050", "NWL051",
-                                                           "NWL052", "NWL060"},
+                                                           "NWL052", "NWL060"} | NO_STATIC_CACHE,
     "syntax-error.conf": {"NWL000"},
     "unbalanced.conf": {"NWL000"},
     "suppressed.conf": {"NWL001", "NWL003", "NWL004", "NWL005", "NWL007", "NWL012", "NWL014",
-                        "NWL016", "NWL020", "NWL022"},
+                        "NWL016", "NWL020", "NWL022"} | NO_STATIC_CACHE,
 }
 
 

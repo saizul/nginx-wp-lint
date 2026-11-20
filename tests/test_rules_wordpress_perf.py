@@ -121,3 +121,43 @@ def test_fastcgi_cache_rules():
     assert f[0].severity is Severity.MEDIUM
     off = http("", "fastcgi_cache off;")
     assert hits(off, "NWL030") == [] and hits(off, "NWL032") == []
+
+
+STATIC = "location ~* \\.(css|js|jpe?g|png|webp|svg|woff2)$ { %s try_files $uri =404; }"
+
+
+def test_static_assets_without_cache_lifetime():
+    f = hits(wp(), "NWL023")
+    assert len(f) == 1
+    assert f[0].message.startswith("CSS, JavaScript and images are served without expires")
+    assert "(location / at line 12)" in f[0].message
+    assert f[0].severity is Severity.LOW
+
+
+def test_static_assets_with_expires_or_cache_control():
+    assert hits(wp(STATIC % "expires 30d;"), "NWL023") == []
+    assert hits(wp(STATIC % "expires max;"), "NWL023") == []
+    assert hits(wp(STATIC % 'add_header Cache-Control "public, max-age=2592000";'), "NWL023") == []
+    assert hits(wp("expires 7d;"), "NWL023") == []  # server level, inherited
+
+
+def test_static_assets_expires_off_or_epoch():
+    for value in ("off", "epoch"):
+        f = hits(wp(STATIC % f"expires {value};"), "NWL023")
+        assert len(f) == 1 and "(location ~* " in f[0].message
+
+
+def test_static_assets_partial_coverage():
+    uploads_only = "location /wp-content/uploads/ { expires 30d; }"
+    f = hits(wp(uploads_only), "NWL023")
+    assert len(f) == 1
+    assert f[0].message.startswith("CSS and JavaScript are served")
+    no_root_location = "server { root /x; index index.php; location ~ \\.php$ { fastcgi_pass p; } }"
+    assert "(the server block)" in hits(no_root_location, "NWL023")[0].message
+
+
+def test_static_assets_unknown_or_not_php():
+    # A location that only includes an unreadable file may set expires: no finding.
+    assert hits(wp(STATIC % "include snippets/static-cache.conf;"), "NWL023") == []
+    plain = "server { listen 80; server_name s.example.com; root /srv; location / { } }"
+    assert hits(plain, "NWL023") == []

@@ -25,7 +25,7 @@ naive-site.conf:7:5: medium NWL002 autoindex-on: autoindex on lists directory co
 including backups and uploads
 ...
 
-16 problems (3 high, 5 medium, 4 low, 4 info) in 1 file
+17 problems (3 high, 5 medium, 5 low, 4 info) in 1 file
 ```
 
 (Lines wrapped here for readability; the full output is in
@@ -49,7 +49,7 @@ including backups and uploads
 - **Inheritance aware**: `add_header` replacement (and `add_header_inherit
   merge`), `fastcgi_param`, `limit_req`, `try_files` and http/server/location
   defaults are resolved the way nginx resolves them.
-- **44 rules** with stable IDs, names, severities and fix hints, covering
+- **45 rules** with stable IDs, names, severities and fix hints, covering
   security, headers, TLS, WordPress/PHP-FPM, caching, performance and
   correctness. `--explain RULE` prints the details.
 - **Honest about what it cannot see**: when an `include` cannot be read, rules
@@ -174,6 +174,7 @@ is simply absent, they report at `info` with a note.
 | `NWL020` | `gzip-disabled` | low | performance | Neither gzip nor brotli compression is enabled *(http-level)* |
 | `NWL021` | `gzip-types-default` | low | performance | gzip is on but gzip_types is not set, so only text/html is compressed |
 | `NWL022` | `client-max-body-size` | low | wordpress | client_max_body_size is missing (1 MB default), too small, or unlimited *(http-level)* |
+| `NWL023` | `static-assets-no-cache` | low | performance | CSS, JavaScript and images are served without a cache lifetime (`expires` or `Cache-Control`), so browsers revalidate them on every page view |
 | `NWL030` | `fastcgi-cache-zone-undefined` | high | cache | fastcgi_cache names a zone that no fastcgi_cache_path defines |
 | `NWL031` | `fastcgi-cache-key-missing` | high | cache | fastcgi_cache is used without fastcgi_cache_key *(http-level)* |
 | `NWL032` | `fastcgi-cache-no-bypass` | high | cache | FastCGI cache without a bypass for logged-in users, carts and POST requests: private pages can be cached and shown to visitors |
