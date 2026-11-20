@@ -11,6 +11,12 @@ but its ID and name keep their meaning.
 
 ### Added
 
+- `NWL023` `static-assets-no-cache` (low, performance): a WordPress site serves
+  theme CSS, core JavaScript or uploaded images without `expires` or a
+  `Cache-Control` header, so browsers revalidate them on every page view. The
+  rule asks which location serves typical asset URLs and reports which kinds are
+  affected; `expires off`/`epoch` count as no lifetime, and locations whose
+  includes cannot be read are skipped.
 - Baseline files: `--write-baseline FILE` records every current problem, and
   `--baseline FILE` (or `baseline = "..."` in the config file) reports and
   fails only on problems that are not in it. Fingerprints ignore line numbers,

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 
+from ..headers import effective_headers
+from ..locations import Outcome, resolve
 from ..model import effective, parse_size
 from ..parser import Directive
 from .base import Finding, LintContext, Rule, Severity
@@ -105,6 +107,63 @@ class ClientMaxBodySize(Rule):
                 yield self.finding(d, f"client_max_body_size {d.arg(0)} is below "
                                       f"{minimum_text}; media and plugin uploads will fail",
                                    server=server)
+
+
+# Typical WordPress static files: theme CSS, core JavaScript and an uploaded image.
+STATIC_PROBES = (
+    ("CSS", "/wp-content/themes/theme/style.css"),
+    ("JavaScript", "/wp-includes/js/jquery/jquery.min.js"),
+    ("images", "/wp-content/uploads/2026/01/photo.jpg"),
+)
+
+
+def _caches(node: Directive) -> bool | None:
+    """True if responses at ``node`` get a cache lifetime, None if an include may set one."""
+    expires = effective(node, "expires")
+    if expires.found:
+        assert expires.last is not None
+        return expires.last.arg(0).lower() not in ("off", "epoch")
+    headers = effective_headers(node)
+    if headers.has("cache-control") or headers.has("expires"):
+        return True
+    if expires.uncertain or headers.uncertain:
+        return None
+    return False
+
+
+class StaticAssetsNoCache(Rule):
+    id = "NWL023"
+    name = "static-assets-no-cache"
+    severity = Severity.LOW
+    category = "performance"
+    summary = ("CSS, JavaScript and images are served without a cache lifetime "
+               "(expires or Cache-Control)")
+    hint = ("Add a static files location, e.g. `location ~* "
+            "\\.(?:css|js|mjs|jpe?g|png|gif|webp|avif|svg|ico|woff2?)$ "
+            "{ expires 30d; access_log off; try_files $uri =404; }`")
+
+    def check(self, ctx: LintContext) -> Iterator[Finding]:
+        for server in ctx.content_servers(php_only=True):
+            missing: list[str] = []
+            anchor: Directive | None = None
+            where = "the server block"
+            for label, uri in STATIC_PROBES:
+                res = resolve(server, uri)
+                if res.outcome is not Outcome.STATIC:
+                    continue
+                node = res.leaf.directive if res.leaf else server.directive
+                if _caches(node) is False:
+                    missing.append(label)
+                    if anchor is None:
+                        anchor = node
+                        if res.leaf is not None:
+                            where = f"{res.leaf} at line {node.line}"
+            if missing and anchor is not None:
+                kinds = missing[0] if len(missing) == 1 else (
+                    f"{', '.join(missing[:-1])} and {missing[-1]}")
+                yield self.finding(anchor, f"{kinds} are served without expires or "
+                                           f"Cache-Control ({where}), so browsers revalidate them "
+                                           "on every page view", server=server)
 
 
 def _zone_names(ctx: LintContext, directive: str, key: str) -> set[str]:
@@ -217,5 +276,6 @@ class FastcgiCacheValidMissing(Rule):
                                       "Cache-Control/Expires headers are not cached")
 
 
-RULES = (GzipDisabled, GzipTypesDefault, ClientMaxBodySize, FastcgiCacheZoneUndefined,
-         FastcgiCacheKeyMissing, FastcgiCacheNoBypass, FastcgiCacheValidMissing)
+RULES = (GzipDisabled, GzipTypesDefault, ClientMaxBodySize, StaticAssetsNoCache,
+         FastcgiCacheZoneUndefined, FastcgiCacheKeyMissing, FastcgiCacheNoBypass,
+         FastcgiCacheValidMissing)
